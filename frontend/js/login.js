@@ -28,7 +28,9 @@ function login(e) {
     const empresa_id = document.getElementById('empresa').value;
 
     const data = { username, password };
-    if (empresa_id) data.empresa_id = empresa_id;
+    if (empresa_id && empresa_id.trim()) {
+        data.empresa_id = empresa_id;
+    }
 
     fetch('http://localhost:3000/login', {
         method: 'POST',
@@ -44,6 +46,10 @@ function login(e) {
         } else {
             alert(data.error);
         }
+    })
+    .catch(error => {
+        console.error('Erro no login:', error);
+        alert('Erro ao conectar ao servidor');
     });
 }
 
