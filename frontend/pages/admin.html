@@ -81,6 +81,7 @@
 
         <div class="tabs">
             <button class="tab-button active" onclick="showTab('aprovar', event)"><i class="fas fa-check-circle"></i> Aprovar Usuários</button>
+            <button class="tab-button" onclick="showTab('niveis', event)"><i class="fas fa-user-graduate"></i> Gerenciar Níveis</button>
             <button class="tab-button" onclick="showTab('criar', event)"><i class="fas fa-plus-circle"></i> Criar Ocorrência</button>
             <button class="tab-button" onclick="showTab('ocorrencias', event)"><i class="fas fa-list"></i> Ocorrências</button>
         </div>
@@ -97,6 +98,22 @@
                     </tr>
                 </thead>
                 <tbody id="usersTable"></tbody>
+            </table>
+        </div>
+
+        <div id="niveis" class="tab-content card">
+            <h3><i class="fas fa-user-graduate"></i> Gerenciar Níveis de Usuários</h3>
+            <p style="color: #666; margin-bottom: 20px;">Aqui você pode promover usuários a Admin ou rebaixá-los para Usuário</p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Nível Atual</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="niveisTable"></tbody>
             </table>
         </div>
 

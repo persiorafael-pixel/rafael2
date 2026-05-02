@@ -237,6 +237,24 @@ app.post('/rebaixar', verifyToken, (req, res) => {
   });
 });
 
+app.post('/promover-admin', verifyToken, (req, res) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Acesso negado' });
+  const { user_id } = req.body;
+  authDb.run("UPDATE users SET role = 'admin' WHERE id = ? AND empresa_id = ?", [user_id, req.user.empresa_id], function(err) {
+    if (err) return res.status(400).json({ error: 'Erro ao promover usuário' });
+    res.json({ message: 'Usuário promovido' });
+  });
+});
+
+app.post('/rebaixar-admin', verifyToken, (req, res) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Acesso negado' });
+  const { user_id } = req.body;
+  authDb.run("UPDATE users SET role = 'usuario' WHERE id = ? AND empresa_id = ?", [user_id, req.user.empresa_id], function(err) {
+    if (err) return res.status(400).json({ error: 'Erro ao rebaixar usuário' });
+    res.json({ message: 'Usuário rebaixado' });
+  });
+});
+
 app.post('/ocorrencia', verifyToken, (req, res) => {
   const { aluno, turma, descricao, data, hora } = req.body;
   const empresa_id = req.user.empresa_id;

@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('hora').value = `${hours}:${minutes}`;
     
     fetchUsers();
+    fetchAllUsersForNiveis();
     fetchOcorrencias();
 });
 
@@ -25,6 +26,9 @@ function showTab(tabId, event) {
     
     if (tabId === 'ocorrencias') {
         fetchOcorrencias();
+    }
+    if (tabId === 'niveis') {
+        fetchAllUsersForNiveis();
     }
 }
 
@@ -179,4 +183,86 @@ function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     window.location.href = '../index.html';
+}
+
+function fetchAllUsersForNiveis() {
+    fetch('http://localhost:3000/users', {
+        headers: { 'Authorization': localStorage.getItem('token') }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const tbody = document.getElementById('niveisTable');
+        tbody.innerHTML = '';
+        
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">Nenhum usuário na sua escola</td></tr>';
+            return;
+        }
+        
+        data.forEach(user => {
+            const tr = document.createElement('tr');
+            let acoes = '';
+            
+            if (user.role === 'usuario') {
+                acoes = `<button class="btn" onclick="promoverAdmin(${user.id})"><i class="fas fa-arrow-up"></i> Promover a Admin</button>`;
+            } else if (user.role === 'admin') {
+                acoes = `<button class="btn btn-danger" onclick="rebaixarAdmin(${user.id})"><i class="fas fa-arrow-down"></i> Rebaixar</button>`;
+            }
+            
+            tr.innerHTML = `
+                <td><strong>${user.username}</strong></td>
+                <td><span style="background: ${user.role === 'admin' ? '#ffc107' : '#e7f3ff'}; padding: 5px 10px; border-radius: 3px; font-size: 12px; color: ${user.role === 'admin' ? '#000' : '#000'};">${user.role}</span></td>
+                <td class="status-${user.status}">${user.status}</td>
+                <td>${acoes}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    })
+    .catch(error => {
+        console.error('Erro ao buscar usuários:', error);
+    });
+}
+
+function promoverAdmin(userId) {
+    if (!confirm('Deseja promover este usuário a Admin?')) return;
+    
+    fetch('http://localhost:3000/promover-admin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('token')
+        },
+        body: JSON.stringify({ user_id: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Usuário promovido a Admin!');
+        fetchAllUsersForNiveis();
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao promover usuário');
+    });
+}
+
+function rebaixarAdmin(userId) {
+    if (!confirm('Deseja rebaixar este usuário para Usuário normal?')) return;
+    
+    fetch('http://localhost:3000/rebaixar-admin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('token')
+        },
+        body: JSON.stringify({ user_id: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Usuário rebaixado!');
+        fetchAllUsersForNiveis();
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao rebaixar usuário');
+    });
 }
