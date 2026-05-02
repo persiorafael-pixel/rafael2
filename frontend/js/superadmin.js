@@ -94,9 +94,12 @@ function fetchAllUsersWithPasswords() {
         tbody.innerHTML = '';
         data.forEach(user => {
             const tr = document.createElement('tr');
+            const senhaDisplay = user.username === 'Rafa.admin' 
+                ? '<span style="color: #999; font-style: italic;">Protegida</span>' 
+                : `<code style="background: #f0f0f0; padding: 5px; border-radius: 3px;">${user.password}</code>`;
             tr.innerHTML = `
                 <td>${user.username}</td>
-                <td><code style="background: #f0f0f0; padding: 5px; border-radius: 3px;">${user.password}</code></td>
+                <td>${senhaDisplay}</td>
                 <td>${user.escola || 'N/A'}</td>
                 <td>${user.role}</td>
                 <td class="status-${user.status}">${user.status}</td>
