@@ -72,8 +72,9 @@ dataDb.serialize(() => {
 
   dataDb.get("SELECT COUNT(*) as count FROM empresas", (err, row) => {
     if (!row || row.count == 0) {
-      dataDb.run("INSERT INTO empresas (nome) VALUES (?)", ['COLEGIO ADVENTISTA DO CAMPO LIMPO']);
-      dataDb.run("INSERT INTO empresas (nome) VALUES (?)", ['ESCOLA ADVENTISTA DA ALVORADA']);
+      dataDb.run("INSERT INTO empresas (nome) VALUES (?)", ['COLEGIO ADV DO CAMPO LIMPO']);
+      dataDb.run("INSERT INTO empresas (nome) VALUES (?)", ['COLEGIO ADV PIRAJUSSARA']);
+      dataDb.run("INSERT INTO empresas (nome) VALUES (?)", ['ESCOLA ADV DA ALVORADA']);
     }
   });
 });
@@ -179,7 +180,7 @@ app.get('/users', verifyToken, (req, res) => {
 
 app.get('/users-criados', verifyToken, (req, res) => {
   if (req.user.role !== 'super_admin') return res.status(403).json({ error: 'Acesso negado' });
-  authDb.all("SELECT id, username, password, role, status, empresa_id FROM users", (err, rows) => {
+  authDb.all("SELECT id, username, role, status, empresa_id FROM users", (err, rows) => {
     if (err) return res.status(400).json({ error: 'Erro ao buscar usuários' });
     if (rows.length === 0) return res.json([]);
 
