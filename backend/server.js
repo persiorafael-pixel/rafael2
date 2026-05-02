@@ -4,18 +4,22 @@ const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const SECRET_KEY = 'your_secret_key';
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('../frontend'));
+
+// Servir arquivos estáticos do frontend
+const frontendPath = path.join(__dirname, '../frontend');
+app.use(express.static(frontendPath));
 
 // Database setup
-const authDb = new sqlite3.Database('./auth.db');
-const dataDb = new sqlite3.Database('./database.db');
+const authDb = new sqlite3.Database(path.join(__dirname, 'auth.db'));
+const dataDb = new sqlite3.Database(path.join(__dirname, 'database.db'));
 
 // Create auth tables
 authDb.serialize(() => {
@@ -255,6 +259,11 @@ app.get('/empresas', (req, res) => {
     if (err) return res.status(400).json({ error: 'Erro ao buscar empresas' });
     res.json(rows);
   });
+});
+
+// Rota fallback para servir o frontend
+app.get('/', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 app.listen(PORT, '0.0.0.0', () => {
