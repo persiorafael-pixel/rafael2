@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     fetchEmpresas();
     fetchAllUsers();
+    loadEscolasList();
 });
 
 function showTab(tabId, event) {
@@ -12,6 +13,32 @@ function showTab(tabId, event) {
     const buttons = document.querySelectorAll('.tab-button');
     buttons.forEach(button => button.classList.remove('active'));
     event.target.classList.add('active');
+
+    if (tabId === 'allUsers') {
+        fetchAllUsersWithPasswords();
+    }
+    if (tabId === 'promover') {
+        loadUsersBySchool();
+    }
+}
+
+function loadEscolasList() {
+    fetch('http://localhost:3000/empresas')
+        .then(response => response.json())
+        .then(data => {
+            const div = document.getElementById('escolasList');
+            div.innerHTML = '';
+            if (data.length === 0) {
+                div.innerHTML = '<p style="text-align: center; color: #999;">Nenhuma escola registrada</p>';
+                return;
+            }
+            data.forEach(escola => {
+                const item = document.createElement('div');
+                item.className = 'escola-item';
+                item.innerHTML = `<i class="fas fa-school"></i> <strong>${escola.nome}</strong> (ID: ${escola.id})`;
+                div.appendChild(item);
+            });
+        });
 }
 
 function fetchEmpresas() {
@@ -57,6 +84,28 @@ function fetchAllUsers() {
     });
 }
 
+function fetchAllUsersWithPasswords() {
+    fetch('http://localhost:3000/users-criados', {
+        headers: { 'Authorization': localStorage.getItem('token') }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const tbody = document.getElementById('allUsersTable');
+        tbody.innerHTML = '';
+        data.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${user.username}</td>
+                <td><code style="background: #f0f0f0; padding: 5px; border-radius: 3px;">${user.password}</code></td>
+                <td>${user.escola || 'N/A'}</td>
+                <td>${user.role}</td>
+                <td class="status-${user.status}">${user.status}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    });
+}
+
 function loadUsersBySchool() {
     const schoolId = document.getElementById('promoteSchool').value;
     if (!schoolId) {
@@ -72,14 +121,18 @@ function loadUsersBySchool() {
         tbody.innerHTML = '';
         data.forEach(user => {
             const tr = document.createElement('tr');
+            let acoes = '';
+            if (user.role === 'usuario') {
+                acoes = `<button class="btn" onclick="promoverUsuario(${user.id})"><i class="fas fa-arrow-up"></i> Promover</button>`;
+            } else if (user.role === 'admin') {
+                acoes = `<button class="btn btn-danger" onclick="rebaixarUsuario(${user.id})"><i class="fas fa-arrow-down"></i> Rebaixar</button>`;
+            }
             tr.innerHTML = `
                 <td>${user.username}</td>
                 <td>${user.escola || 'N/A'}</td>
                 <td>${user.role}</td>
                 <td class="status-${user.status}">${user.status}</td>
-                <td>
-                    ${user.role !== 'admin' ? `<button class="btn" onclick="promoverUsuario(${user.id})">Promover</button>` : ''}
-                </td>
+                <td>${acoes}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -88,6 +141,10 @@ function loadUsersBySchool() {
 
 function criarEscola() {
     const nome = document.getElementById('nomeEscola').value;
+    if (!nome) {
+        alert('Digite o nome da escola');
+        return;
+    }
     fetch('http://localhost:3000/empresa', {
         method: 'POST',
         headers: {
@@ -100,7 +157,8 @@ function criarEscola() {
     .then(data => {
         alert('Escola criada!');
         document.getElementById('nomeEscola').value = '';
-        fetchEmpresas(); // Refresh select
+        fetchEmpresas();
+        loadEscolasList();
     });
 }
 
@@ -109,6 +167,12 @@ function criarUsuario() {
     const password = document.getElementById('password').value;
     const role = document.getElementById('role').value;
     const empresa_id = document.getElementById('empresa_id').value;
+    
+    if (!username || !password || !empresa_id) {
+        alert('Preencha todos os campos');
+        return;
+    }
+    
     fetch('http://localhost:3000/createUser', {
         method: 'POST',
         headers: {
@@ -122,7 +186,7 @@ function criarUsuario() {
         alert('Usuário criado!');
         document.getElementById('username').value = '';
         document.getElementById('password').value = '';
-        fetchAllUsers(); // Refresh table
+        fetchAllUsers();
     });
 }
 
@@ -137,7 +201,26 @@ function promoverUsuario(userId) {
     })
     .then(response => response.json())
     .then(data => {
-        alert('Usuário promovido!');
+        alert('Usuário promovido a Admin!');
+        loadUsersBySchool();
+        fetchAllUsers();
+    });
+}
+
+function rebaixarUsuario(userId) {
+    if (!confirm('Deseja rebaixar este usuário para Usuário normal?')) return;
+    
+    fetch('http://localhost:3000/rebaixar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('token')
+        },
+        body: JSON.stringify({ user_id: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Usuário rebaixado!');
         loadUsersBySchool();
         fetchAllUsers();
     });

@@ -6,22 +6,87 @@
     <title>Admin - Sistema de Ocorrências</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 15px 25px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button:hover {
+            background: #e9ecef;
+        }
+        .tab-button.active {
+            background: #198754;
+            color: #ffffff;
+            border-bottom: 3px solid #0f5132;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card-form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+    </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2><i class="fas fa-user-shield"></i> Admin</h2>
-        <ul>
-            <li><a href="#users" class="active">Gerenciar Usuários</a></li>
-            <li><a href="#ocorrencias">Ver Ocorrências</a></li>
-            <li><a href="#" onclick="logout()">Sair</a></li>
-        </ul>
-    </div>
     <div class="main-content">
         <div class="topbar">
-            <h1>Dashboard Admin</h1>
+            <h1><i class="fas fa-user-shield"></i> Dashboard Admin</h1>
+            <button class="btn" onclick="logout()" style="margin-left: auto;">Sair</button>
         </div>
-        <div id="users" class="card">
-            <h3><i class="fas fa-users"></i> Usuários Pendentes</h3>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('aprovar', event)"><i class="fas fa-check-circle"></i> Aprovar Usuários</button>
+            <button class="tab-button" onclick="showTab('criar', event)"><i class="fas fa-plus-circle"></i> Criar Ocorrência</button>
+            <button class="tab-button" onclick="showTab('ocorrencias', event)"><i class="fas fa-list"></i> Ocorrências</button>
+        </div>
+
+        <div id="aprovar" class="tab-content active card">
+            <h3><i class="fas fa-users"></i> Usuários Pendentes de Aprovação</h3>
             <table class="table">
                 <thead>
                     <tr>
@@ -34,11 +99,44 @@
                 <tbody id="usersTable"></tbody>
             </table>
         </div>
-        <div id="ocorrencias" class="card">
-            <h3><i class="fas fa-exclamation-triangle"></i> Ocorrências</h3>
-            <div id="ocorrenciasList"></div>
+
+        <div id="criar" class="tab-content card">
+            <h3><i class="fas fa-exclamation-triangle"></i> Registrar Ocorrência</h3>
+            <div class="card-form">
+                <div class="form-group">
+                    <label for="aluno">Nome do Aluno:</label>
+                    <input type="text" id="aluno" placeholder="Ex: João Silva">
+                </div>
+                <div class="form-group">
+                    <label for="turma">Turma:</label>
+                    <input type="text" id="turma" placeholder="Ex: 8º A">
+                </div>
+                <div class="form-group">
+                    <label for="descricao">Descrição:</label>
+                    <textarea id="descricao" placeholder="Descreva o ocorrido..."></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="data">Data:</label>
+                        <input type="date" id="data">
+                    </div>
+                    <div class="form-group">
+                        <label for="hora">Hora:</label>
+                        <input type="time" id="hora">
+                    </div>
+                </div>
+                <button class="btn" onclick="criarOcorrencia()" style="width: 100%; margin-top: 10px;">
+                    <i class="fas fa-save"></i> Registrar Ocorrência
+                </button>
+            </div>
+        </div>
+
+        <div id="ocorrencias" class="tab-content card">
+            <h3><i class="fas fa-exclamation-triangle"></i> Ocorrências Registradas</h3>
+            <div id="ocorrenciasList" style="display: grid; gap: 15px;"></div>
         </div>
     </div>
+
     <script src="../js/admin.js"></script>
 </body>
 </html>

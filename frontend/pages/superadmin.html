@@ -33,6 +33,21 @@
         .tab-content.active {
             display: block;
         }
+        .escolas-scroll {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .escola-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border-left: 4px solid #198754;
+        }
     </style>
 </head>
 <body>
@@ -45,12 +60,14 @@
             <button class="tab-button active" onclick="showTab('empresas', event)">Gerenciar Escolas</button>
             <button class="tab-button" onclick="showTab('users', event)">Gerenciar Usuários</button>
             <button class="tab-button" onclick="showTab('allUsers', event)">Usuários Criados</button>
-            <button class="tab-button" onclick="showTab('promover', event)">Promover Usuários</button>
+            <button class="tab-button" onclick="showTab('promover', event)">Promover/Rebaixar</button>
         </div>
         <div id="empresas" class="tab-content active card">
             <h3><i class="fas fa-building"></i> Criar Nova Escola</h3>
             <input type="text" id="nomeEscola" placeholder="Nome da Escola">
             <button class="btn" onclick="criarEscola()">Criar Escola</button>
+            <h4 style="margin-top: 30px;"><i class="fas fa-list"></i> Escolas Registradas</h4>
+            <div class="escolas-scroll" id="escolasList"></div>
         </div>
         <div id="users" class="tab-content card">
             <h3><i class="fas fa-users"></i> Criar Novo Usuário</h3>
@@ -64,11 +81,12 @@
             <button class="btn" onclick="criarUsuario()">Criar Usuário</button>
         </div>
         <div id="allUsers" class="tab-content card">
-            <h3><i class="fas fa-list"></i> Todos os Usuários</h3>
+            <h3><i class="fas fa-list"></i> Usuários Criados (com Senhas)</h3>
             <table class="table">
                 <thead>
                     <tr>
                         <th>Username</th>
+                        <th>Senha</th>
                         <th>Escola</th>
                         <th>Role</th>
                         <th>Status</th>
@@ -78,7 +96,7 @@
             </table>
         </div>
         <div id="promover" class="tab-content card">
-            <h3><i class="fas fa-user-plus"></i> Promover Usuário</h3>
+            <h3><i class="fas fa-user-exchange"></i> Promover / Rebaixar Usuário</h3>
             <div class="input-group">
                 <label for="promoteSchool"><i class="fas fa-building"></i> Selecionar Escola</label>
                 <select id="promoteSchool" onchange="loadUsersBySchool()"></select>
@@ -90,7 +108,7 @@
                         <th>Escola</th>
                         <th>Role</th>
                         <th>Status</th>
-                        <th>Ação</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="promoteUsersTable"></tbody>

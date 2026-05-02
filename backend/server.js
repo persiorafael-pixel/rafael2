@@ -173,6 +173,30 @@ app.get('/users', verifyToken, (req, res) => {
   });
 });
 
+app.get('/users-criados', verifyToken, (req, res) => {
+  if (req.user.role !== 'super_admin') return res.status(403).json({ error: 'Acesso negado' });
+  authDb.all("SELECT id, username, password, role, status, empresa_id FROM users", (err, rows) => {
+    if (err) return res.status(400).json({ error: 'Erro ao buscar usuários' });
+    if (rows.length === 0) return res.json([]);
+
+    const schoolIds = [...new Set(rows.map(r => r.empresa_id).filter(Boolean))];
+    if (schoolIds.length === 0) {
+      return res.json(rows.map(row => ({ ...row, escola: 'N/A' })));
+    }
+
+    const placeholders = schoolIds.map(() => '?').join(',');
+    dataDb.all(`SELECT id, nome FROM empresas WHERE id IN (${placeholders})`, schoolIds, (err2, schools) => {
+      if (err2) return res.status(400).json({ error: 'Erro ao buscar escolas' });
+      const schoolMap = {};
+      schools.forEach(s => schoolMap[s.id] = s.nome);
+      res.json(rows.map(row => ({
+        ...row,
+        escola: row.empresa_id ? schoolMap[row.empresa_id] || 'Desconhecida' : 'N/A'
+      })));
+    });
+  });
+});
+
 app.post('/aprovar', verifyToken, (req, res) => {
   if (req.user.role !== 'admin') return res.status(403).json({ error: 'Acesso negado' });
   const { user_id } = req.body;
@@ -197,6 +221,15 @@ app.post('/promover', verifyToken, (req, res) => {
   authDb.run("UPDATE users SET role = 'admin' WHERE id = ?", [user_id], function(err) {
     if (err) return res.status(400).json({ error: 'Erro ao promover usuário' });
     res.json({ message: 'Usuário promovido' });
+  });
+});
+
+app.post('/rebaixar', verifyToken, (req, res) => {
+  if (req.user.role !== 'super_admin') return res.status(403).json({ error: 'Acesso negado' });
+  const { user_id } = req.body;
+  authDb.run("UPDATE users SET role = 'usuario' WHERE id = ?", [user_id], function(err) {
+    if (err) return res.status(400).json({ error: 'Erro ao rebaixar usuário' });
+    res.json({ message: 'Usuário rebaixado' });
   });
 });
 
