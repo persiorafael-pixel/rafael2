@@ -1,4 +1,6 @@
 // Admin script
+const API_URL = window.location.origin;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Set today's date as default
     const today = new Date().toISOString().split('T')[0];
@@ -33,7 +35,7 @@ function showTab(tabId, event) {
 }
 
 function fetchUsers() {
-    fetch('http://localhost:3000/users', {
+    fetch(`${API_URL}/users`, {
         headers: { 'Authorization': localStorage.getItem('token') }
     })
     .then(response => response.json())
@@ -65,7 +67,7 @@ function fetchUsers() {
 }
 
 function aprovar(userId) {
-    fetch('http://localhost:3000/aprovar', {
+    fetch(`${API_URL}/aprovar`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -84,7 +86,7 @@ function aprovar(userId) {
 function recusar(userId) {
     if (!confirm('Deseja realmente recusar este usuário?')) return;
     
-    fetch('http://localhost:3000/recusar', {
+    fetch(`${API_URL}/recusar`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -112,7 +114,7 @@ function criarOcorrencia() {
         return;
     }
 
-    fetch('http://localhost:3000/ocorrencia', {
+    fetch(`${API_URL}/ocorrencia`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -139,7 +141,7 @@ function criarOcorrencia() {
 }
 
 function fetchOcorrencias() {
-    fetch('http://localhost:3000/ocorrencias', {
+    fetch(`${API_URL}/ocorrencias`, {
         headers: { 'Authorization': localStorage.getItem('token') }
     })
     .then(response => response.json())
@@ -186,7 +188,7 @@ function logout() {
 }
 
 function fetchAllUsersForNiveis() {
-    fetch('http://localhost:3000/users', {
+    fetch(`${API_URL}/users`, {
         headers: { 'Authorization': localStorage.getItem('token') }
     })
     .then(response => response.json())
@@ -226,7 +228,7 @@ function fetchAllUsersForNiveis() {
 function promoverAdmin(userId) {
     if (!confirm('Deseja promover este usuário a Admin?')) return;
     
-    fetch('http://localhost:3000/promover-admin', {
+    fetch(`${API_URL}/promover-admin`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -248,7 +250,7 @@ function promoverAdmin(userId) {
 function rebaixarAdmin(userId) {
     if (!confirm('Deseja rebaixar este usuário para Usuário normal?')) return;
     
-    fetch('http://localhost:3000/rebaixar-admin', {
+    fetch(`${API_URL}/rebaixar-admin`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -279,9 +279,22 @@ app.get('/empresas', (req, res) => {
   });
 });
 
-// Rota fallback para servir o frontend
+// Rota raiz
 app.get('/', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// Rota fallback para SPA - serve index.html para rotas não-API
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/api') && !req.path.startsWith('/login') && !req.path.startsWith('/register') && 
+      !req.path.startsWith('/createUser') && !req.path.startsWith('/users') && !req.path.startsWith('/empresa') &&
+      !req.path.startsWith('/aprovar') && !req.path.startsWith('/recusar') && !req.path.startsWith('/promover') &&
+      !req.path.startsWith('/rebaixar') && !req.path.startsWith('/ocorrencia') && !req.path.startsWith('/ocorrencias') &&
+      !req.path.startsWith('/empresas') && !req.path.startsWith('/promover-admin') && !req.path.startsWith('/rebaixar-admin') &&
+      !req.path.startsWith('/users-criados') && req.method === 'GET') {
+    return res.sendFile(path.join(frontendPath, 'index.html'));
+  }
+  next();
 });
 
 app.listen(PORT, '0.0.0.0', () => {

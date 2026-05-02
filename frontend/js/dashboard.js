@@ -1,10 +1,12 @@
 // Dashboard script
+const API_URL = window.location.origin;
+
 document.addEventListener('DOMContentLoaded', function() {
     fetchOcorrencias();
 });
 
 function fetchOcorrencias() {
-    fetch('http://localhost:3000/ocorrencias', {
+    fetch(`${API_URL}/ocorrencias`, {
         headers: { 'Authorization': localStorage.getItem('token') }
     })
     .then(response => response.json())
@@ -30,7 +32,7 @@ function criarOcorrencia() {
     const descricao = document.getElementById('descricao').value;
     const data = document.getElementById('data').value;
     const hora = document.getElementById('hora').value;
-    fetch('http://localhost:3000/ocorrencia', {
+    fetch(`${API_URL}/ocorrencia`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

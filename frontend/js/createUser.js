@@ -1,11 +1,13 @@
 // Create User script
+const API_URL = window.location.origin;
+
 document.addEventListener('DOMContentLoaded', function() {
     fetchEmpresas();
     document.getElementById('createUserForm').addEventListener('submit', createUser);
 });
 
 function fetchEmpresas() {
-    fetch('http://localhost:3000/empresas')
+    fetch(`${API_URL}/empresas`)
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('empresa');
@@ -28,7 +30,7 @@ function createUser(e) {
     const token = localStorage.getItem('token');
     if (token) headers.Authorization = token;
 
-    fetch('http://localhost:3000/register', {
+    fetch(`${API_URL}/register`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ username, password, empresa_id })

@@ -1,4 +1,6 @@
 // Super Admin script
+const API_URL = window.location.origin;
+
 document.addEventListener('DOMContentLoaded', function() {
     fetchEmpresas();
     fetchAllUsers();
@@ -23,7 +25,7 @@ function showTab(tabId, event) {
 }
 
 function loadEscolasList() {
-    fetch('http://localhost:3000/empresas')
+    fetch(`${API_URL}/empresas`)
         .then(response => response.json())
         .then(data => {
             const div = document.getElementById('escolasList');
@@ -42,7 +44,7 @@ function loadEscolasList() {
 }
 
 function fetchEmpresas() {
-    fetch('http://localhost:3000/empresas')
+    fetch(`${API_URL}/empresas`)
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('empresa_id');
@@ -64,7 +66,7 @@ function fetchEmpresas() {
 }
 
 function fetchAllUsers() {
-    fetch('http://localhost:3000/users', {
+    fetch(`${API_URL}/users`, {
         headers: { 'Authorization': localStorage.getItem('token') }
     })
     .then(response => response.json())
@@ -85,7 +87,7 @@ function fetchAllUsers() {
 }
 
 function fetchAllUsersWithPasswords() {
-    fetch('http://localhost:3000/users-criados', {
+    fetch(`${API_URL}/users-criados`, {
         headers: { 'Authorization': localStorage.getItem('token') }
     })
     .then(response => response.json())
@@ -115,7 +117,7 @@ function loadUsersBySchool() {
         document.getElementById('promoteUsersTable').innerHTML = '';
         return;
     }
-    fetch(`http://localhost:3000/users?empresa_id=${schoolId}`, {
+    fetch(`${API_URL}/users?empresa_id=${schoolId}`, {
         headers: { 'Authorization': localStorage.getItem('token') }
     })
     .then(response => response.json())
@@ -148,7 +150,7 @@ function criarEscola() {
         alert('Digite o nome da escola');
         return;
     }
-    fetch('http://localhost:3000/empresa', {
+    fetch(`${API_URL}/empresa`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -176,7 +178,7 @@ function criarUsuario() {
         return;
     }
     
-    fetch('http://localhost:3000/createUser', {
+    fetch(`${API_URL}/createUser`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -194,7 +196,7 @@ function criarUsuario() {
 }
 
 function promoverUsuario(userId) {
-    fetch('http://localhost:3000/promover', {
+    fetch(`${API_URL}/promover`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -213,7 +215,7 @@ function promoverUsuario(userId) {
 function rebaixarUsuario(userId) {
     if (!confirm('Deseja rebaixar este usuário para Usuário normal?')) return;
     
-    fetch('http://localhost:3000/rebaixar', {
+    fetch(`${API_URL}/rebaixar`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

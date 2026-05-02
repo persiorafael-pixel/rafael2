@@ -1,4 +1,6 @@
 // Login script
+const API_URL = window.location.origin;
+
 document.addEventListener('DOMContentLoaded', function() {
     fetchEmpresas();
     document.getElementById('loginForm').addEventListener('submit', login);
@@ -8,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchEmpresas() {
-    fetch('http://localhost:3000/empresas')
+    fetch(`${API_URL}/empresas`)
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('empresa');
@@ -32,7 +34,7 @@ function login(e) {
         data.empresa_id = empresa_id;
     }
 
-    fetch('http://localhost:3000/login', {
+    fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
