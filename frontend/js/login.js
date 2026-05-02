@@ -10,9 +10,14 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function fetchEmpresas() {
+    console.log('Buscando empresas de:', `${API_URL}/empresas`);
     fetch(`${API_URL}/empresas`)
-        .then(response => response.json())
+        .then(response => {
+            console.log('Resposta empresas:', response.status);
+            return response.json();
+        })
         .then(data => {
+            console.log('Dados empresas:', data);
             const select = document.getElementById('empresa');
             data.forEach(empresa => {
                 const option = document.createElement('option');
@@ -20,6 +25,10 @@ function fetchEmpresas() {
                 option.textContent = empresa.nome;
                 select.appendChild(option);
             });
+            console.log('Empresas carregadas no select');
+        })
+        .catch(error => {
+            console.error('Erro ao buscar empresas:', error);
         });
 }
 
