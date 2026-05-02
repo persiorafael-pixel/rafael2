@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin - Sistema de Ocorrências</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .tab-button.active {
+            background: #198754;
+            color: #ffffff;
+        }
+        .tab-button:hover {
+            background: #157347;
+            color: #ffffff;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>Dashboard Super Admin</h1>
+            <button class="btn" onclick="logout()" style="margin-left: auto;">Sair</button>
+        </div>
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('empresas', event)">Gerenciar Escolas</button>
+            <button class="tab-button" onclick="showTab('users', event)">Gerenciar Usuários</button>
+            <button class="tab-button" onclick="showTab('allUsers', event)">Usuários Criados</button>
+            <button class="tab-button" onclick="showTab('promover', event)">Promover Usuários</button>
+        </div>
+        <div id="empresas" class="tab-content active card">
+            <h3><i class="fas fa-building"></i> Criar Nova Escola</h3>
+            <input type="text" id="nomeEscola" placeholder="Nome da Escola">
+            <button class="btn" onclick="criarEscola()">Criar Escola</button>
+        </div>
+        <div id="users" class="tab-content card">
+            <h3><i class="fas fa-users"></i> Criar Novo Usuário</h3>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Senha">
+            <select id="role">
+                <option value="admin">Admin</option>
+                <option value="usuario">Usuário</option>
+            </select>
+            <select id="empresa_id"></select>
+            <button class="btn" onclick="criarUsuario()">Criar Usuário</button>
+        </div>
+        <div id="allUsers" class="tab-content card">
+            <h3><i class="fas fa-list"></i> Todos os Usuários</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Escola</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="allUsersTable"></tbody>
+            </table>
+        </div>
+        <div id="promover" class="tab-content card">
+            <h3><i class="fas fa-user-plus"></i> Promover Usuário</h3>
+            <div class="input-group">
+                <label for="promoteSchool"><i class="fas fa-building"></i> Selecionar Escola</label>
+                <select id="promoteSchool" onchange="loadUsersBySchool()"></select>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Escola</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="promoteUsersTable"></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="../js/superadmin.js"></script>
+</body>
+</html>

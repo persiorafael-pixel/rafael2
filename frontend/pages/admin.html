@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Sistema de Ocorrências</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2><i class="fas fa-user-shield"></i> Admin</h2>
+        <ul>
+            <li><a href="#users" class="active">Gerenciar Usuários</a></li>
+            <li><a href="#ocorrencias">Ver Ocorrências</a></li>
+            <li><a href="#" onclick="logout()">Sair</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>Dashboard Admin</h1>
+        </div>
+        <div id="users" class="card">
+            <h3><i class="fas fa-users"></i> Usuários Pendentes</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable"></tbody>
+            </table>
+        </div>
+        <div id="ocorrencias" class="card">
+            <h3><i class="fas fa-exclamation-triangle"></i> Ocorrências</h3>
+            <div id="ocorrenciasList"></div>
+        </div>
+    </div>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
